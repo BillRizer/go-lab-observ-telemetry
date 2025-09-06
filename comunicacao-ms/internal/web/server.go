@@ -93,7 +93,6 @@ func (w *WebServer) handleTemperature(rw http.ResponseWriter, req *http.Request)
 		return
 	}
 
-	// Busca temperatura
 	_, weatherSpan := w.Tracer.Start(ctx, "weather-request")
 	weatherAPIKey := os.Getenv("WEATHER_API_KEY")
 	encodedLocalidade := url.QueryEscape(viacep.Localidade)
@@ -117,7 +116,6 @@ func (w *WebServer) handleTemperature(rw http.ResponseWriter, req *http.Request)
 		return
 	}
 
-	// Calcula temperaturas
 	tempC := weather.Current.TempC
 	tempF := tempC*1.8 + 32
 	tempK := tempC + 273.0

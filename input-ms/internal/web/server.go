@@ -59,7 +59,6 @@ func (w *WebServer) handleZipCode(rw http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	// Chamada ao Serviço B
 	_, childSpan := w.Tracer.Start(ctx, "call-temperature-service")
 	defer childSpan.End()
 
