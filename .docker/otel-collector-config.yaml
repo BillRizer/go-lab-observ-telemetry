@@ -2,54 +2,19 @@ receivers:
   otlp:
     protocols:
       grpc:
-        endpoint: 0.0.0.0:4317
-        transport: tcp
-        max_recv_msg_size_mib: 32
-        max_concurrent_streams: 128
-        read_buffer_size: 512_000
-        write_buffer_size: 512_000
-        keepalive:
-          server_parameters:
-            max_connection_idle: 1h
-            max_connection_age: 12h
-            max_connection_age_grace: 5m
-            time: 1h
-            timeout: 20s
-
-exporters:
-  prometheus:
-    endpoint: "0.0.0.0:8889"
-  debug:
-    verbosity: detailed
-  otlp:
-    endpoint: jaeger-all-in-one:4317
-    tls:
-      insecure: true
-    sending_queue:
-      enabled: true
-      num_consumers: 10
-      queue_size: 5000
-    retry_on_failure:
-      enabled: true
-      initial_interval: 5s
-      max_interval: 30s
-      max_elapsed_time: 5m
+      http:
 
 processors:
   batch:
-    timeout: 1s
-    send_batch_size: 1024
+
+exporters:
+  zipkin:
+    endpoint: "http://zipkin:9411/api/v2/spans"
+    format: proto
 
 service:
-  telemetry:
-    logs:
-      level: debug
   pipelines:
     traces:
       receivers: [otlp]
       processors: [batch]
-      exporters: [debug, otlp]
-    metrics:
-      receivers: [otlp]
-      processors: [batch]
-      exporters: [debug, prometheus]
+      exporters: [zipkin]
